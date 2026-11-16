@@ -27,6 +27,6 @@ jobs:
         run: |
           python -m sunops.demo --scenario safe-refactor --out reports/safe
           ! python -m sunops.demo --scenario lost-dedup --out reports/bug
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: always()
         with: {name: canary-reports, path: reports/}
