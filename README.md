@@ -787,14 +787,7 @@ chiffres devient une décision visible dans l'historique Git.
 Oui : les tables Gold sont dans le schéma `analytics` de PostgreSQL, lisibles par n'importe quel
 outil BI.
 
----
 
-### Origine du dépôt
-
-Ce dépôt était au départ un tutoriel Jenkins + AWS CodeBuild + CodeDeploy qui déployait une page
-Flask. Il garde l'idée de départ (Jenkins pilote le déploiement sur AWS) et l'applique à un
-pipeline de données : ce qu'on déploie ici, ce sont des transformations, et ce qu'on vérifie avant
-de les livrer, ce sont des chiffres.
 
 ---
 
