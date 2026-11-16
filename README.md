@@ -16,7 +16,9 @@
 > produites par l'ancienne et la nouvelle version du code, et bloque si les chiffres ont bougé
 > sans raison.**
 
-![Dashboard Grafana](docs/images/grafana-dashboard.png)
+![SunOps : le pipeline de bout en bout, avec ses composants](docs/images/pipeline-overview.png)
+
+<sub>En haut, le flux de données quotidien (Python → S3 → Spark → PostgreSQL → dbt → Grafana, orchestré par Airflow). En bas, la mise en production (GitHub → Jenkins → Docker → Data Canary → Terraform → AWS). Version vectorielle : [pipeline-overview.svg](docs/images/pipeline-overview.svg).</sub>
 
 ---
 
@@ -528,6 +530,10 @@ B-INV2-S3 perd 29 %, mais elle est envoyée en **inspection** : sa perte vient d
 la poussière.
 
 ![Plan de nettoyage](docs/images/cleaning-plan.png)
+
+**Le tableau de bord Grafana.** Tout ce qui précède, en direct, sur http://localhost:3000.
+
+![Dashboard Grafana](docs/images/grafana-dashboard.png)
 
 ---
 
