@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: silver
+    description: Silver layer produced by spark_jobs/bronze_to_silver.py and loaded by sunops.load.
+    schema: "{{ env_var('RAW_SCHEMA', 'silver') }}"
+    tables:
+      - name: telemetry
+        description: One validated, deduplicated reading per array every 15 minutes.
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 50, period: hour}
+        columns:
+          - name: event_id
+            tests: [unique, not_null]

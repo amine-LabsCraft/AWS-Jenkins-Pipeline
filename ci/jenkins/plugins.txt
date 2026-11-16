@@ -1,0 +1,10 @@
+workflow-aggregator
+git
+docker-workflow
+pipeline-utility-steps
+htmlpublisher
+junit
+timestamper
+aws-credentials
+configuration-as-code
+job-dsl

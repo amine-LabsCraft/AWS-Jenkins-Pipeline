@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 540" width="1100" height="540" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#52514e"/>
+    </marker>
+    <style>
+      .box{fill:#ffffff;stroke:#d6d4ce;stroke-width:1.2}
+      .t{font-size:14px;font-weight:700;fill:#0b0b0b}
+      .s{font-size:12px;fill:#52514e}
+      .m{font-size:11.5px;fill:#52514e;font-family:Consolas, Menlo, monospace}
+      .lbl{font-size:11px;fill:#52514e}
+      .flow{stroke:#52514e;stroke-width:2;fill:none}
+      .dash{stroke:#8a8983;stroke-width:1.4;stroke-dasharray:5 4;fill:none}
+    </style>
+  </defs>
+
+  <rect width="1100" height="540" rx="14" fill="#fcfcfb"/>
+  <text x="25" y="38" font-size="20" font-weight="700" fill="#0b0b0b">SunOps · architecture Medallion</text>
+  <text x="25" y="58" class="s">Centrale solaire fictive OZZ-1 (Ouarzazate) · 24 panneaux · une lecture toutes les 15 minutes</text>
+
+  <!-- Airflow band -->
+  <rect x="25" y="78" width="1050" height="44" rx="10" fill="#eef4fc" stroke="#9ec5f4"/>
+  <text x="45" y="105" class="t" fill="#184f95">Airflow</text>
+  <text x="115" y="105" class="s">DAG sunops_daily (@daily) : ingest_bronze → bronze_to_silver → load_silver → dbt_build → check_freshness</text>
+  <path class="dash" d="M100 122 V188"/><path class="dash" d="M460 122 V188"/><path class="dash" d="M640 122 V188"/><path class="dash" d="M820 122 V188"/>
+
+  <!-- Main flow -->
+  <g>
+    <rect class="box" x="25" y="190" width="150" height="92" rx="10"/>
+    <rect x="25" y="190" width="150" height="6" rx="3" fill="#2a78d6"/>
+    <text x="40" y="218" class="t">Source IoT</text>
+    <text x="40" y="240" class="s">passerelle simulée</text>
+    <text x="40" y="258" class="s">Chergui, sable,</text>
+    <text x="40" y="274" class="s">poussière, pannes</text>
+  </g>
+  <g>
+    <rect class="box" x="205" y="190" width="150" height="92" rx="10"/>
+    <rect x="205" y="190" width="150" height="6" rx="3" fill="#a8692e"/>
+    <text x="220" y="218" class="t">Bronze</text>
+    <text x="220" y="240" class="s">JSON brut, tel quel</text>
+    <text x="220" y="258" class="m">s3://lake/bronze</text>
+    <text x="220" y="274" class="s">partition par jour</text>
+  </g>
+  <g>
+    <rect class="box" x="385" y="190" width="150" height="92" rx="10"/>
+    <rect x="385" y="190" width="150" height="6" rx="3" fill="#e34948"/>
+    <text x="400" y="218" class="t">Spark</text>
+    <text x="400" y="240" class="s">validation par contrat</text>
+    <text x="400" y="258" class="s">dédoublonnage</text>
+    <text x="400" y="274" class="s">EMR Serverless</text>
+  </g>
+  <g>
+    <rect class="box" x="565" y="190" width="150" height="92" rx="10"/>
+    <rect x="565" y="190" width="150" height="6" rx="3" fill="#8a8f98"/>
+    <text x="580" y="218" class="t">Silver</text>
+    <text x="580" y="240" class="s">Parquet typé</text>
+    <text x="580" y="258" class="m">s3://lake/silver</text>
+    <text x="580" y="274" class="s">→ PostgreSQL</text>
+  </g>
+  <g>
+    <rect class="box" x="745" y="190" width="150" height="92" rx="10"/>
+    <rect x="745" y="190" width="150" height="6" rx="3" fill="#c9971c"/>
+    <text x="760" y="218" class="t">Gold · dbt</text>
+    <text x="760" y="240" class="m">fct_daily_perf.</text>
+    <text x="760" y="258" class="m">mart_cleaning</text>
+    <text x="760" y="274" class="s">+ tests dbt</text>
+  </g>
+  <g>
+    <rect class="box" x="925" y="190" width="150" height="92" rx="10"/>
+    <rect x="925" y="190" width="150" height="6" rx="3" fill="#1baf7a"/>
+    <text x="940" y="218" class="t">Restitution</text>
+    <text x="940" y="240" class="s">Grafana</text>
+    <text x="940" y="258" class="s">Power BI</text>
+    <text x="940" y="274" class="s">plan de nettoyage</text>
+  </g>
+  <path class="flow" d="M175 236 H203" marker-end="url(#a)"/>
+  <path class="flow" d="M355 236 H383" marker-end="url(#a)"/>
+  <path class="flow" d="M535 236 H563" marker-end="url(#a)"/>
+  <path class="flow" d="M715 236 H743" marker-end="url(#a)"/>
+  <path class="flow" d="M895 236 H923" marker-end="url(#a)"/>
+
+  <!-- Contract and quarantine -->
+  <rect x="385" y="330" width="150" height="62" rx="10" fill="#f6f5f2" stroke="#d6d4ce"/>
+  <text x="400" y="355" class="t" font-size="13">Contrat de données</text>
+  <text x="400" y="376" class="m">telemetry.yml 1.0.0</text>
+  <path class="flow" d="M460 330 V284" marker-end="url(#a)"/>
+  <text x="468" y="312" class="lbl">règles</text>
+
+  <rect x="565" y="330" width="150" height="62" rx="10" fill="#fdf0ee" stroke="#f0b7b6"/>
+  <text x="580" y="355" class="t" font-size="13">Quarantaine</text>
+  <text x="580" y="376" class="s">ligne rejetée + motif</text>
+  <path class="flow" d="M520 282 L590 328" marker-end="url(#a)"/>
+
+  <rect x="745" y="330" width="150" height="62" rx="10" fill="#f6f5f2" stroke="#d6d4ce"/>
+  <text x="760" y="355" class="t" font-size="13">ops.*</text>
+  <text x="760" y="376" class="s">santé data + canary</text>
+  <path class="dash" d="M820 330 V284"/>
+
+  <!-- Jenkins band -->
+  <rect x="25" y="432" width="1050" height="80" rx="10" fill="#fff6e5" stroke="#f3c96b"/>
+  <text x="45" y="460" class="t" fill="#7a5200">Jenkins · CI/CD des données</text>
+  <text x="45" y="482" class="s">lint · pytest · compatibilité du contrat · Data Canary (main vs branche sur le même échantillon) · terraform plan · validation manuelle</text>
+  <text x="45" y="500" class="s">déploiement AWS : image → ECR · job Spark, dbt et DAG → S3 · infrastructure (S3, ECR, EMR Serverless, IAM) → Terraform</text>
+  <path class="dash" d="M1050 432 V286" marker-end="url(#a)"/>
+  <text x="1040" y="420" class="lbl" text-anchor="end">déploie la version approuvée</text>
+</svg>

@@ -1,0 +1,11 @@
+.git
+.canary
+lake
+reports
+docs
+**/__pycache__
+.pytest_cache
+.ruff_cache
+dbt/target
+dbt/logs
+infra/terraform/.terraform

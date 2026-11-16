@@ -1,0 +1,8 @@
+version: 2
+
+seeds:
+  - name: arrays
+    description: Plant layout, generated from sunops/plant.py (a unit test keeps both in sync).
+    columns:
+      - name: array_id
+        tests: [unique, not_null]

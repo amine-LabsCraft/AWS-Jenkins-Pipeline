@@ -1,0 +1,24 @@
+[project]
+name = "sunops"
+version = "1.0.0"
+description = "DataOps pipeline for solar telemetry: Spark, dbt, Airflow, Jenkins, AWS, with a Data Canary gate."
+requires-python = ">=3.10"
+authors = [{ name = "Amine AIT ALI" }]
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+# The repo has an `airflow/` folder: without this, ruff would treat the Airflow package as local code.
+known-third-party = ["airflow", "docker"]

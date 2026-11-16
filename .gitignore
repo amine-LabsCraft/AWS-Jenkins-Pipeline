@@ -1,0 +1,30 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.venv/
+venv/
+
+# data and run outputs
+lake/
+reports/
+.canary/
+spark-warehouse/
+metastore_db/
+derby.log
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+logs/
+
+# terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate*
+infra/terraform/tfplan
+.terraform.lock.hcl
+
+.env

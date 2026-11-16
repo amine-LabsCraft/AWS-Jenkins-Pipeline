@@ -1,0 +1,24 @@
+# Data contract between the plant's IoT gateway (producer) and the data platform (consumers).
+# Any change to this file goes through Jenkins: a breaking change without a major version
+# bump fails the build (see sunops/contracts.py).
+contract: solar_telemetry
+version: 1.0.0
+owner: data-platform
+description: One reading per panel array every 15 minutes, OZZ-1 plant (Ouarzazate).
+primary_key: [array_id, ts]
+
+fields:
+  event_id:       {type: string,    required: true}
+  plant_id:       {type: string,    required: true, allowed: [OZZ-1]}
+  zone:           {type: string,    required: true, allowed: [A, B, C]}
+  inverter_id:    {type: string,    required: true, pattern: '^[ABC]-INV[0-9]$'}
+  array_id:       {type: string,    required: true, pattern: '^[ABC]-INV[0-9]-S[0-9]$'}
+  ts:             {type: timestamp, required: true}
+  irradiance_wm2: {type: float,     required: true, min: 0, max: 1500}
+  ambient_temp_c: {type: float,     required: true, min: -20, max: 60}
+  module_temp_c:  {type: float,     required: true, min: -20, max: 95}
+  dc_voltage_v:   {type: float,     required: true, min: 0, max: 1500}
+  dc_current_a:   {type: float,     required: true, min: 0, max: 2000}
+  ac_power_kw:    {type: float,     required: true, min: 0, max: 300}
+  status:         {type: string,    required: true, allowed: [OK, DEGRADED, OFFLINE]}
+  ingested_at:    {type: timestamp, required: false}

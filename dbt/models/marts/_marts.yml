@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: dim_array
+    description: The 24 panel arrays of OZZ-1 and their cleaning robot schedule.
+    columns:
+      - name: array_id
+        tests: [unique, not_null]
+      - name: zone
+        tests:
+          - accepted_values: {values: [A, B, C]}
+
+  - name: fct_energy_hourly
+    description: Energy per array and hour.
+    columns:
+      - name: array_hour_key
+        tests: [unique, not_null]
+      - name: energy_kwh
+        tests:
+          - value_between: {min_value: 0, max_value: 300}
+
+  - name: fct_daily_performance
+    description: Daily energy, reference yield and Performance Ratio per array.
+    columns:
+      - name: array_day_key
+        tests: [unique, not_null]
+      - name: array_id
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_array'), field: array_id}
+      - name: performance_ratio
+        tests:
+          - value_between: {min_value: 0, max_value: 1.05}
+      - name: degraded_share
+        tests:
+          - value_between: {min_value: 0, max_value: 1}
+
+  - name: mart_cleaning_recommendations
+    description: Cleaning or inspection decision per array and day, with the money lost to dust.
+    columns:
+      - name: array_day_key
+        tests: [unique, not_null]
+      - name: recommendation
+        tests:
+          - not_null
+          - accepted_values: {values: [OK, SCHEDULE, CLEAN_NOW, INSPECT]}
+      - name: lost_revenue_mad
+        tests:
+          - value_between: {min_value: 0, max_value: 100000}

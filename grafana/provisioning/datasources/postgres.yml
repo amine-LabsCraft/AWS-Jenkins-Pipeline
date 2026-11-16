@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - name: SunOps Postgres
+    uid: sunops-pg
+    type: grafana-postgresql-datasource
+    url: postgres:5432
+    user: sunops
+    isDefault: true
+    secureJsonData:
+      password: sunops
+    jsonData:
+      database: sunops
+      sslmode: disable
+      postgresVersion: 1600
+      timescaledb: false

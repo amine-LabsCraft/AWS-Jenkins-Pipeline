@@ -1,0 +1,92 @@
+# Local platform. One command runs the whole pipeline end to end:
+#   docker compose up --build
+# then open Grafana on http://localhost:3000 (admin / sunops).
+#
+# Optional profiles:
+#   docker compose --profile airflow up -d   -> Airflow on http://localhost:8081
+#   docker compose --profile ci up -d        -> Jenkins on http://localhost:8080
+name: sunops
+
+x-pg-env: &pg-env
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGUSER: sunops
+  PGPASSWORD: sunops
+  PGDATABASE: sunops
+  SUNOPS_PG_DSN: postgresql+psycopg2://sunops:sunops@postgres:5432/sunops
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sunops
+      POSTGRES_PASSWORD: sunops
+      POSTGRES_DB: sunops
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sunops -d sunops"]
+      interval: 5s
+      retries: 20
+
+  # One-shot job: generate -> Spark (Bronze->Silver) -> load -> dbt build. Exits when done.
+  pipeline:
+    build: .
+    image: sunops-pipeline:local
+    environment:
+      <<: *pg-env
+      DAYS: ${DAYS:-14}
+      START_DATE: ${START_DATE:-2026-03-02}
+      LAKE_DIR: /app/lake
+    volumes:
+      - lake:/app/lake
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: sunops
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/sunops.json
+    ports: ["3000:3000"]
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  airflow:
+    profiles: [airflow]
+    image: apache/airflow:2.10.3-python3.11
+    command: standalone
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+      SUNOPS_IMAGE: sunops-pipeline:local
+      SUNOPS_NETWORK: sunops_default
+      SUNOPS_LAKE_VOLUME: sunops_lake
+    ports: ["8081:8080"]
+    user: "0:0"   # needs the Docker socket to start pipeline containers (local demo only)
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  jenkins:
+    profiles: [ci]
+    build: ci/jenkins
+    image: sunops-jenkins:local
+    environment:
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-sunops}
+      SUNOPS_REPO_URL: ${SUNOPS_REPO_URL:-https://github.com/amine-LabsCraft/AWS-Jenkins-Pipeline.git}
+    ports: ["8080:8080"]
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  pgdata:
+  lake:
+  jenkins_home:

@@ -1,0 +1,23 @@
+# Data Canary configuration: which Gold tables to diff and how much change is acceptable.
+# The canary runs main (baseline) and the branch (candidate) on the same golden sample,
+# so on a pure refactor every check should be PASS.
+tables:
+  - name: fct_daily_performance
+    keys: [array_id, date_day]
+    metrics: [energy_kwh, reference_kwh, performance_ratio]
+  - name: mart_cleaning_recommendations
+    keys: [array_id, date_day]
+    metrics: [lost_energy_kwh, lost_revenue_mad]
+
+thresholds:
+  row_count_warn_pct: 0.5       # % of rows gained or lost
+  row_count_fail_pct: 2.0
+  key_missing_fail_pct: 0.5     # % of (array, day) keys on one side only
+  null_rate_warn_pp: 0.5        # percentage points of extra NULLs on any column
+  null_rate_fail_pp: 2.0
+  metric_sum_warn_pct: 0.3      # drift of SUM(metric)
+  metric_sum_fail_pct: 2.0
+  value_mismatch_warn_pct: 1.0  # % of rows whose metric moved beyond tolerance
+  value_mismatch_fail_pct: 5.0
+  value_rel_tolerance: 0.001    # 0.1 % relative tolerance per value
+  min_score: 85                 # below this, BLOCK even without a FAIL

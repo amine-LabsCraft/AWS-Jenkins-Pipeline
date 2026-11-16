@@ -1,0 +1,24 @@
+# Every value comes from the environment, so the same project builds dev, the canary
+# schemas (canary_baseline / canary_candidate) and prod without editing this file.
+sunops:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      port: "{{ env_var('PGPORT', '5432') | int }}"
+      user: "{{ env_var('PGUSER', 'sunops') }}"
+      password: "{{ env_var('PGPASSWORD', 'sunops') }}"
+      dbname: "{{ env_var('PGDATABASE', 'sunops') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'analytics') }}"
+      threads: 4
+    prod:
+      type: postgres
+      host: "{{ env_var('PGHOST') }}"
+      port: "{{ env_var('PGPORT', '5432') | int }}"
+      user: "{{ env_var('PGUSER') }}"
+      password: "{{ env_var('PGPASSWORD') }}"
+      dbname: "{{ env_var('PGDATABASE') }}"
+      schema: analytics
+      threads: 8
+      sslmode: require

@@ -1,0 +1,36 @@
+name: sunops
+version: "1.0.0"
+config-version: 2
+profile: sunops
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+target-path: target
+clean-targets: [target, dbt_packages]
+
+vars:
+  interval_minutes: 15          # telemetry granularity
+  tariff_mad_per_kwh: 0.85      # selling price used to value lost energy
+  daylight_irradiance_wm2: 50   # below this, a reading counts as night
+  clean_now_loss_pct: 6         # soiling loss that triggers an immediate cleaning
+  schedule_loss_pct: 3          # soiling loss that schedules the next robot pass
+  inspect_degraded_share: 0.5   # share of DEGRADED daylight readings that means "electrical fault"
+
+models:
+  sunops:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  sunops:
+    arrays:
+      +column_types:
+        capacity_kw: numeric
+        tilt_deg: integer
+        commissioned_on: date
+        cleaning_weekday: integer
