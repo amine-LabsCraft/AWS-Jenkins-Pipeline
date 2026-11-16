@@ -10,11 +10,11 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.11"}
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with: {distribution: temurin, java-version: "17"}
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: ruff check sunops spark_jobs tests airflow
@@ -27,6 +27,6 @@ jobs:
         run: |
           python -m sunops.demo --scenario safe-refactor --out reports/safe
           ! python -m sunops.demo --scenario lost-dedup --out reports/bug
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with: {name: canary-reports, path: reports/}
